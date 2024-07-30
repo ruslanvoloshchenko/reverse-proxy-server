@@ -1,34 +1,15 @@
 <?php
 
-//  if(!isset($_SERVER['HTTP_REFERER'])){
-// header('Location: https://seoshope.com');
-// }
-
-
-if($_SERVER['REQUEST_URI'] === "/user/edit-account/"){
-    header('Location: https://udemy.toolzbuy.com/');
-}
-
-
-if($_SERVER['REQUEST_URI'] === "/user/logout/"){
-    header('Location: https://udemy.toolzbuy.com/');
-}
-// /test-detail/215 
-
 define('WEBSITE_URL', 'https://www.rxakademie.cz');
 define('WEBSITE_HLS', 'https://hls-c.udemycdn.com');
 define('WEBSITE_DASH', 'https://dash-enc-c.udemycdn.com');
 define('WEBSITE_CLOUDSOLUTIONS', 'https://app.grammarly.com');
 define('COOKIE_FILE', __DIR__ . '/cookiehegwew.txt');
 
-function initRequest($url){
-    $response = makeRequest($url);
-    //$rawResponseHeaders = $response["headers"];
-
+function initRequest($url, $cookie){
+    $response = makeRequest($url, $cookie);
     $responseBody = $response["body"];
     $responseInfo = $response["responseInfo"];
-
-    //$infos = $response["infos"];
     $contentType = isset($responseInfo["content_type"]) ? $responseInfo["content_type"] : 'text/html';
 
     // Allow from any origin
@@ -62,7 +43,7 @@ function initRequest($url){
         echo proxify($responseBody);
     }
 }
-function makeRequest($url)
+function makeRequest($url, $cookie)
 {
     $browserRequestHeaders = mgetallheaders();    
     unset($browserRequestHeaders["Host"]);
@@ -76,7 +57,7 @@ function makeRequest($url)
     $browserRequestHeaders['User-Agent'] = $agent;
     $browserRequestHeaders['Origin'] = WEBSITE_URL;
     $browserRequestHeaders['Referer'] = $referer;
-    $browserRequestHeaders['Cookie'] = "PHPSESSID=ggdg0rvuf7a31spu1prje077af; _gid=GA1.2.1279998783.1722299464; _gat_gtag_UA_136783404_1=1; _ga_T634LD0SWH=GS1.1.1722299449.2.1.1722299903.0.0.0; _ga=GA1.1.327116547.1720705113";
+    $browserRequestHeaders['Cookie'] = $cookie;
     /*if(preg_match('#'.preg_quote(WEBSITE_URL_MARKETPLACE).'#', $url)){
         $browserRequestHeaders['Sec-Fetch-Site'] = 'cross-site';
     }*/
@@ -121,16 +102,12 @@ function makeRequest($url)
     curl_setopt($ch, CURLOPT_HTTPHEADER, $curlRequestHeaders);
     $err = curl_error($ch);
     $response = curl_exec($ch);
-    // $response = str_replace('list-menu--list-menu-container--21IlT popper--popper--2r2To"', 'list-menu--list-menu-container--21IlT popper--popper--2r2To" style="display:none;"', $response);
-    // $response = str_replace('srf-navbar__right"', 'srf-navbar__right" style="display:none;"', $response);
+    $response = str_replace('Výsledek', '', $response);
     $response = str_replace('role="banner"', 'role="banner" style="display: none;"', $response);
     $responseInfo = curl_getinfo($ch);
     $headerSize = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
     $infos = curl_getinfo($ch);
     $responseInfo['content_type'] = $browserRequestHeaders['HTTP_ACCEPT'];
-    // error_log($browserRequestHeaders['HTTP_ACCEPT']);
-    // error_log(print_r($responseInfo, true));
-
     curl_close($ch);
     $responseHeaders = substr($response, 0, $headerSize);
     return array("headers" => $responseHeaders, "body" => $response, "responseInfo" => $responseInfo, 'infos'=>$infos);
