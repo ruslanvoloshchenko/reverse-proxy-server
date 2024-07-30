@@ -142,7 +142,7 @@ function proxify($result)
         $result
     );
     if(isset($_SERVER['REQUEST_SCHEME']) && $_SERVER['REQUEST_SCHEME'] == 'http' && $parse['scheme'] == 'https'){
-        $result = str_replace('https://', 'http://', $result);
+        // $result = str_replace('https://', 'http://', $result);
     }
     return $result;
 }
