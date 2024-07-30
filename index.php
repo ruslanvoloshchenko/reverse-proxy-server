@@ -14,9 +14,9 @@ if ($file) {
 
     fclose($file);
     if(isset($_COOKIE['user'])) {
-		initRequest($url, $data);
+		initRequest($url . '/test-detail/215', $data);
     } else {
-    	header('Location: https://backend-drpozd.eu1.pitunnel.com?referer='.urlencode('https://test-drpozd.eu1.pitunnel.com/'));
+    	header('Location: https://backend-drpozd.eu1.pitunnel.com?referer='.urlencode('https://test-drpozd.eu1.pitunnel.com/test-detail/215'));
     	exit;
     }
 } else {
