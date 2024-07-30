@@ -13,8 +13,6 @@ if ($file) {
     $data = fread($file, $filesize);
 
     fclose($file);
-    print_r(isset($_COOKIE['user']) ? "Hello" : "fail");
-
     if(isset($_COOKIE['user'])) {
 		initRequest($url, $data);
     } else {
